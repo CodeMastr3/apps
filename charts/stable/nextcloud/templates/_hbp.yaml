@@ -12,25 +12,34 @@ volumeMounts:
 {{- end }}
 command: ["sh /hbp.sh"]
 env:
-  NEXTCLOUD_URL: 'http://{{ include "tc.common.names.fullname" . }}'
-  TRUSTED_PROXIES: "{{ .Values.env.TRUSTED_PROXIES }}"
-  NEXTCLOUD_DATA_DIR: "{{ .Values.env.NEXTCLOUD_DATA_DIR }}"
-  POSTGRES_DB: "{{ .Values.postgresql.postgresqlDatabase }}"
-  POSTGRES_USER: "{{ .Values.postgresql.postgresqlUsername }}"
-  POSTGRES_PASSWORD:
-    secretKeyRef:
-      name: dbcreds
-      key: postgresql-password
-  POSTGRES_HOST:
-    secretKeyRef:
-      name: dbcreds
-      key: plainporthost
-  REDIS_HOST:
-    secretKeyRef:
-      name: rediscreds
-      key: plainhost
-  REDIS_HOST_PASSWORD:
-    secretKeyRef:
-      name: rediscreds
-      key: redis-password
+  - name: NEXTCLOUD_URL
+    value: 'http://127.0.0.1'
+  - name: TRUSTED_PROXIES
+    value: "{{ .Values.env.TRUSTED_PROXIES }}"
+  - name: NEXTCLOUD_DATA_DIR
+    value: "{{ .Values.env.NEXTCLOUD_DATA_DIR }}"
+  - name: POSTGRES_DB
+    value: "{{ .Values.postgresql.postgresqlDatabase }}"
+  - name: POSTGRES_USER
+    value: "{{ .Values.postgresql.postgresqlUsername }}"
+  - name: POSTGRES_PASSWORD:
+    valueFrom:
+      secretKeyRef:
+        name: dbcreds
+        key: postgresql-password
+  - name: POSTGRES_HOST:
+    valueFrom:
+      secretKeyRef:
+        name: dbcreds
+        key: plainporthost
+  - name: REDIS_HOST:
+    valueFrom:
+      secretKeyRef:
+        name: rediscreds
+        key: plainhost
+  - name: REDIS_HOST_PASSWORD:
+    valueFrom:
+      secretKeyRef:
+        name: rediscreds
+        key: redis-password
 {{- end -}}
