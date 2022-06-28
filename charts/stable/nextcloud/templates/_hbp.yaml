@@ -22,22 +22,22 @@ env:
     value: "{{ .Values.postgresql.postgresqlDatabase }}"
   - name: POSTGRES_USER
     value: "{{ .Values.postgresql.postgresqlUsername }}"
-  - name: POSTGRES_PASSWORD:
+  - name: POSTGRES_PASSWORD
     valueFrom:
       secretKeyRef:
         name: dbcreds
         key: postgresql-password
-  - name: POSTGRES_HOST:
+  - name: POSTGRES_HOST
     valueFrom:
       secretKeyRef:
         name: dbcreds
         key: plainporthost
-  - name: REDIS_HOST:
+  - name: REDIS_HOST
     valueFrom:
       secretKeyRef:
         name: rediscreds
         key: plainhost
-  - name: REDIS_HOST_PASSWORD:
+  - name: REDIS_HOST_PASSWORD
     valueFrom:
       secretKeyRef:
         name: rediscreds
