@@ -30,7 +30,7 @@ secretEnv:
   NEXTCLOUD_ADMIN_PASSWORD: "adminpass"
 
 initContainer:
-  prepare:
+  datadir:
     image: "{{ .Values.alpineImage.repository }}:{{ .Values.alpineImage.tag }}"
     securityContext:
       runAsUser: 0
@@ -41,7 +41,7 @@ initContainer:
       - |
         /bin/bash <<'EOF'
         echo "Forcing Data-Dir chmod to 770..."
-        chmod -R 777 /data
+        chmod -R 770 /data
         EOF
 
     volumeMounts:
