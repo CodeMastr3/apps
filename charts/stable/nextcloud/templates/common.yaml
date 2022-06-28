@@ -7,7 +7,7 @@
 {{- $newMiddlewares :=  append .Values.ingress.main.fixedMiddlewares "tc-nextcloud-chain" }}
 {{- $_ := set .Values.ingress.main "fixedMiddlewares" $newMiddlewares -}}
 
-{{- $_ := set .Values.additionalContainers "hpb" (include "nextcloud.hpb" . | fromYaml) -}}
+{{/* $_ := set .Values.additionalContainers "hpb" (include "nextcloud.hpb" . | fromYaml) */}}
 
 {{/* Render cronjob for nextcloud */}}
 {{- include "nextcloud.cronjob" . }}
