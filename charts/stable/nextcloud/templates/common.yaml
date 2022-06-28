@@ -8,6 +8,7 @@
 {{- $_ := set .Values.ingress.main "fixedMiddlewares" $newMiddlewares -}}
 
 {{- $_ := set .Values.additionalContainers "hpb" (include "nextcloud.hpb" . | fromYaml) -}}
+{{- $_ := set .Values.additionalContainers "nginx" (include "nextcloud.nginx" . | fromYaml) -}}
 
 {{/* Render cronjob for nextcloud */}}
 {{- include "nextcloud.cronjob" . }}
