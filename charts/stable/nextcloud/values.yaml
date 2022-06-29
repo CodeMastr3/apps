@@ -79,7 +79,7 @@ persistence:
     mountPath: "/var/www/html"
   data:
     enabled: true
-    mountPath: "/data"
+    mountPath: "/var/www/html/data"
 
 probes:
   liveness:
