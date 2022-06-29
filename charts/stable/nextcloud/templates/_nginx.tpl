@@ -10,6 +10,9 @@ securityContext:
 volumeMounts:
   {{ nindent 2 . }}
 {{- end }}
+  - mountPath: /etc/nginx
+    name: nginx
+    readOnly: true
 ports:
   - containerPort: 80
 

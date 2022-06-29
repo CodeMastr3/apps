@@ -97,11 +97,17 @@ persistence:
     enabled: true
     mountPath: "/var/www/html/data"
   nginx:
-    enabled: true
-    type: configMap
-    objectName: '{{ include "tc.common.names.fullname" . -}}-nginx'
-    mountPath: /etc/nginx
+    enabled: "true"
+    mountPath: "/etc/nginx"
+    noMount: true
     readOnly: true
+    type: "custom"
+    volumeSpec:
+      configMap:
+        name: '{{ include "tc.common.names.fullname" . }}-nginx'
+        items:
+        - key: nginx.conf
+          path: nginx.conf
 
 configmap:
   nginx:
