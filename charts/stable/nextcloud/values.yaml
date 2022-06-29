@@ -40,13 +40,14 @@ initContainers:
       - "-c"
       - |
         /bin/bash <<'EOF'
-        echo "Forcing Data-Dir chmod to 770..."
-        chmod -R 770 /data
+        echo "Migrating old data when found..."
         EOF
 
     volumeMounts:
       - name: data
         mountPath: "/data"
+      - name: html
+        mountPath: "/html"
 
 env:
   TRUSTED_PROXIES: "172.16.0.0/16"
