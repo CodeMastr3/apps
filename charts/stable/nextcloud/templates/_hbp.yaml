@@ -16,8 +16,6 @@ env:
     value: 'http://127.0.0.1'
   - name: TRUSTED_PROXIES
     value: "{{ .Values.env.TRUSTED_PROXIES }}"
-  - name: NEXTCLOUD_DATA_DIR
-    value: "{{ .Values.env.NEXTCLOUD_DATA_DIR }}"
   - name: POSTGRES_DB
     value: "{{ .Values.postgresql.postgresqlDatabase }}"
   - name: POSTGRES_USER
