@@ -10,9 +10,10 @@ securityContext:
 volumeMounts:
   {{ nindent 2 . }}
 {{- end }}
-  - mountPath: /etc/nginx
+  - mountPath: /etc/nginx/nginx.conf
     name: nginx
     readOnly: true
+    subPath: nginx.conf
 ports:
   - containerPort: 80
 
