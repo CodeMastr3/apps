@@ -282,8 +282,6 @@ configmap:
             }
         }
 
-
-
 cronjob:
   schedule: "*/5 * * * *"
   annotations: {}
