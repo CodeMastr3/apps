@@ -24,6 +24,7 @@ questions:
             type: boolean
             default: true
 # Include{global}
+
   - variable: controller
     group: "Controller"
     label: ""
@@ -74,121 +75,34 @@ questions:
                     - value: "OnDelete"
                       description: "(Legacy) OnDelete: ignore .spec.template changes"
 # Include{controllerExpert}
-  - variable: wger
+  - variable: env
     group: "Container Configuration"
     label: "Image Environment"
     schema:
       additional_attrs: true
       type: dict
       attrs:
-        - variable: sync_exercises_on_startup
-          label: "SYNC_EXERCISES_ON_STARTUP"
-          schema:
-            type: boolean
-            default: false
-        - variable: download_exercise_images_on_startup
-          label: "DOWNLOAD_EXERCISE_IMAGES_ON_STARTUP"
-          schema:
-            type: boolean
-            default: false
-        - variable: allow_registration
-          label: "ALLOW_REGISTRATION"
-          schema:
-            type: boolean
-            default: true
-        - variable: allow_guest_users
-          label: "ALLOW_GUEST_USERS"
-          schema:
-            type: boolean
-            default: true
-        - variable: allow_upload_videos
-          label: "ALLOW_UPLOAD_VIDEOS"
-          schema:
-            type: boolean
-            default: true
-        - variable: exercise_cache_ttl
-          label: "EXERCISE_CACHE_TTL"
+        - variable: WG_HOST
+          label: "WG_HOST"
+          description: "The public hostname of your VPN server."
           schema:
             type: string
             required: true
-            default: "3600"
-        - variable: django_perform_migrations
-          label: "DJANGO_PERFORM_MIGRATIONS"
+            default: ""
+  - variable: secretEnv
+    group: "Container Configuration"
+    label: "Image Secrets"
+    schema:
+      additional_attrs: true
+      type: dict
+      attrs:
+        - variable: PASSWORD
+          label: "ADMIN_PASSWORD"
           schema:
-            type: boolean
-            default: true
-        - variable: django_debug
-          label: "DJANGO_DEBUG"
-          schema:
-            type: boolean
-            default: false
-        - variable: enable_email
-          label: "Email Settings"
-          schema:
-            type: boolean
-            default: false
-            show_subquestions_if: true
-            subquestions:
-              - variable: from_email
-                label: "FROM_EMAIL"
-                schema:
-                  type: string
-                  default: ""
-              - variable: email_host
-                label: "EMAIL_HOST"
-                schema:
-                  type: string
-                  default: ""
-              - variable: email_port
-                label: "EMAIL_PORT"
-                schema:
-                  type: string
-                  required: true
-                  default: "587"
-              - variable: email_host_user
-                label: "EMAIL_HOST_USER"
-                schema:
-                  type: string
-                  default: ""
-              - variable: email_host_password
-                label: "EMAIL_HOST_PASSWORD"
-                schema:
-                  type: string
-                  private: true
-                  default: ""
-              - variable: email_use_tls
-                label: "EMAIL_USE_TLS"
-                schema:
-                  type: boolean
-                  default: false
-              - variable: email_use_ssl
-                label: "EMAIL_USE_SSL"
-                schema:
-                  type: boolean
-                  default: false
-        - variable: captchasettings
-          label: "Captcha Settings"
-          schema:
-            type: boolean
-            default: false
-            show_subquestions_if: true
-            subquestions:
-              - variable: recaptha_public_key
-                label: "RECAPTCHA_PUBLIC_KEY"
-                schema:
-                  type: string
-                  default: ""
-              - variable: recaptha_private_key
-                label: "RECAPTCHA_PRIVATE_KEY"
-                schema:
-                  type: string
-                  private: true
-                  default: ""
-              - variable: nocaptcha
-                label: "NOCAPTCHA"
-                schema:
-                  type: boolean
-                  default: true
+            type: string
+            private: true
+            required: true
+            default: ""
 # Include{containerConfig}
 
   - variable: service
@@ -207,7 +121,7 @@ questions:
             attrs:
 # Include{serviceSelector}
                     - variable: main
-                      label: "Main Service Port Configuration"
+                      label: "Web GUI port configuration"
                       schema:
                         additional_attrs: true
                         type: dict
@@ -217,7 +131,7 @@ questions:
                             description: "This port exposes the container port on the service"
                             schema:
                               type: int
-                              default: 10249
+                              default: 51821
                               required: true
                           - variable: advanced
                             label: "Show Advanced settings"
@@ -226,11 +140,16 @@ questions:
                               default: false
                               show_subquestions_if: true
                               subquestions:
+                                - variable: enabled
+                                  label: "Enable the port"
+                                  schema:
+                                    type: boolean
+                                    default: true
                                 - variable: protocol
                                   label: "Port Type"
                                   schema:
                                     type: string
-                                    default: "HTTP"
+                                    default: "TCP"
                                     enum:
                                       - value: HTTP
                                         description: "HTTP"
@@ -252,7 +171,63 @@ questions:
                                   description: "The internal(!) port on the container the Application runs on"
                                   schema:
                                     type: int
-                                    default: 80
+                                    default: 51821
+        - variable: vpn
+          label: "Wireguard Internal"
+          description: "Wireguard Internal Port"
+          schema:
+            additional_attrs: true
+            type: dict
+            attrs:
+# Include{serviceSelector}
+                    - variable: vpn
+                      label: "Wireguard Interal Port"
+                      description: "Omada Controller or EAP Discovery Utility discovers Omada devices."
+                      schema:
+                        additional_attrs: true
+                        type: dict
+                        attrs:
+                          - variable: port
+                            label: "Port"
+                            description: "This port exposes the container port on the service"
+                            schema:
+                              type: int
+                              default: 51820
+                              required: true
+                          - variable: advanced
+                            label: "Show Advanced settings"
+                            schema:
+                              type: boolean
+                              default: false
+                              show_subquestions_if: true
+                              subquestions:
+                                - variable: protocol
+                                  label: "Port Type"
+                                  schema:
+                                    type: string
+                                    default: "UDP"
+                                    enum:
+                                      - value: HTTP
+                                        description: "HTTP"
+                                      - value: "HTTPS"
+                                        description: "HTTPS"
+                                      - value: TCP
+                                        description: "TCP"
+                                      - value: "UDP"
+                                        description: "UDP"
+                                - variable: nodePort
+                                  label: "Node Port (Optional)"
+                                  description: "This port gets exposed to the node. Only considered when service type is NodePort, Simple or LoadBalancer"
+                                  schema:
+                                    type: int
+                                    min: 9000
+                                    max: 65535
+                                - variable: targetPort
+                                  label: "Target Port"
+                                  description: "The internal(!) port on the container the Application runs on"
+                                  schema:
+                                    type: int
+                                    default: 51820
 
   - variable: serviceexpert
     group: "Networking and Services"
@@ -272,6 +247,7 @@ questions:
 # Include{serviceExpert}
 
 # Include{serviceList}
+
   - variable: persistence
     label: "Integrated Persistent Storage"
     description: "Integrated Persistent Storage"
@@ -280,16 +256,15 @@ questions:
       additional_attrs: true
       type: dict
       attrs:
-        - variable: media
-          label: "App Media Storage"
-          description: "Stores the Application Media."
+        - variable: config
+          label: "App Config Storage"
+          description: "Stores the Application Configuration."
           schema:
             additional_attrs: true
             type: dict
             attrs:
 # Include{persistenceBasic}
 # Include{persistenceAdvanced}
-
 # Include{persistenceList}
 
   - variable: ingress
@@ -365,19 +340,19 @@ questions:
           description: "The UserID of the user running the application"
           schema:
             type: int
-            default: 1000
+            default: 0
         - variable: runAsGroup
           label: "runAsGroup"
           description: "The groupID this App of the user running the application"
           schema:
             type: int
-            default: 1000
+            default: 0
         - variable: fsGroup
           label: "fsGroup"
           description: "The group that should own ALL storage."
           schema:
             type: int
-            default: 1000
+            default: 568
 # Include{podSecurityContextAdvanced}
 
 # Include{resources}
