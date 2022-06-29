@@ -45,6 +45,7 @@ command:
          echo "Notify_push not found... waiting..."
     done
     echo "Notify_push found... Launching High Performance Backend..."
+    touch /var/www/html/REQHPB
     /var/www/html/custom_apps/notify_push/bin/x86_64/notify_push /var/www/html/config/config.php
     EOF
 env:

@@ -65,6 +65,9 @@ initContainers:
         mountPath: "/html"
 
 env:
+  # IP used for exposing nextcloud
+  # Often the service or nodePort IP
+  AccessIP: 127.0.0.1
   TRUSTED_PROXIES: "172.16.0.0/16"
   POSTGRES_DB: "{{ .Values.postgresql.postgresqlDatabase }}"
   POSTGRES_USER: "{{ .Values.postgresql.postgresqlUsername }}"
