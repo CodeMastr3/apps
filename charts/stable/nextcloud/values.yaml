@@ -40,6 +40,8 @@ initContainers:
       - "-c"
       - |
         /bin/bash <<'EOF'
+        echo "Enforcing chmod 770 on data-dir..."
+        chmod 770 /var/www/html/data
         echo "Migrating old data when found..."
         EOF
 
