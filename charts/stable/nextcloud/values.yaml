@@ -1,7 +1,7 @@
 image:
   repository: tccr.io/truecharts/nextcloud-fpm
   pullPolicy: IfNotPresent
-  tag: v24.0.2@sha256:65083615c6f2d140df1ef51d0e564816a97bd906cdb47f608817cb385e2f0784
+  tag: v24.0.2@sha256:9e8d4ffb40cc101381988597abff494d9415e2ad1e25babd274dd1ae5521bf87
 
 securityContext:
   readOnlyRootFilesystem: false
