@@ -27,21 +27,21 @@ probes:
   liveness:
     custom: true
     spec:
-      initialDelaySeconds: 20
+      initialDelaySeconds: 25
       tcpSocket:
         port: 9000
 
   readiness:
     custom: true
     spec:
-      initialDelaySeconds: 20
+      initialDelaySeconds: 25
       tcpSocket:
         port: 9000
 
   startup:
     custom: true
     spec:
-      initialDelaySeconds: 20
+      initialDelaySeconds: 25
       tcpSocket:
         port: 9000
 
