@@ -38,6 +38,12 @@ command:
   - "-c"
   - |
     /bin/bash <<'EOF'
+    echo "Waiting for Nextcloud to start..."
+    until $(curl --output /dev/null --silent --head --fail -H "Host: test.fakedomain.dns" http://127.0.0.1/status.php); do
+        printf '.'
+        sleep 5
+    done
+
     echo "Waiting for notify_push file to be available..."
     until [ -f /var/www/html/custom_apps/notify_push/bin/x86_64/notify_push ]
     do
@@ -45,7 +51,6 @@ command:
          echo "Notify_push not found... waiting..."
     done
     echo "Notify_push found... Launching High Performance Backend..."
-    touch /var/www/html/REQHPB
     /var/www/html/custom_apps/notify_push/bin/x86_64/notify_push /var/www/html/config/config.php
     EOF
 env:
