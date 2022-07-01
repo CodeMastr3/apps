@@ -1,7 +1,7 @@
 image:
   repository: tccr.io/truecharts/nextcloud-fpm
   pullPolicy: IfNotPresent
-  tag: v24.0.2@sha256:404d278aeb0d38af1f1626674c0d8a26f068eee6cdaa9b3d4c99ad2103cee3d6
+  tag: v24.0.2@sha256:de6fa3a0f338c00e888c4c94563dad2f0f168f2678d888b1df4d5fa92ab74d51
 
 securityContext:
   readOnlyRootFilesystem: false
@@ -22,6 +22,34 @@ service:
 secretEnv:
   NEXTCLOUD_ADMIN_USER: "admin"
   NEXTCLOUD_ADMIN_PASSWORD: "adminpass"
+
+lifecycle:
+  postStart:
+    exec:
+      command:
+        - "/bin/bash"
+        - "-c"
+        - |
+          echo "waiting for pod start before enabling HPB..."
+          until $(curl --output /dev/null --silent --head --fail -H "Host: test.fakedomain.dns" http://127.0.0.1/status.php); do
+              printf '.'
+              sleep 5
+          done
+
+          [ -f /var/www/html/custom_apps/notify_push/bin/x86_64/notify_push ] && echo "installing notify_push already seems to be installed..." || run_as "php /var/www/html/occ app:install notify_push"
+
+          echo "Waiting for HPB-Container to start..."
+          until [ -f /var/www/html/REQHPB ]
+          do
+               sleep 10
+               echo "HPB-Container not found... waiting..."
+          done
+          echo  "HPB-Container found!"
+          echo  "Waiting for 20 seconds before High Performance Backend setup..."
+          sleep 20
+          echo  "Configuring High Performance Backend for url: ${ACCESS_URL}"
+          run_as "php /var/www/html/occ notify_push:setup ${ACCESS_URL}/push"
+          rm -f /var/www/html/REQHPB
 
 probes:
   liveness:
