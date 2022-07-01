@@ -13,5 +13,8 @@
 {{/* Render cronjob for nextcloud */}}
 {{- include "nextcloud.cronjob" . }}
 
+{{/* Render job for nextcloud */}}
+{{- include "nextcloud.job" . }}
+
 {{/* Render the templates */}}
 {{ include "tc.common.loader.apply" . }}
