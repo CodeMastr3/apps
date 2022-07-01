@@ -22,14 +22,33 @@ spec:
           {{- end }}
           containers:
             - name: {{ .Chart.Name }}
+              image: "{{ .Values.image.repository }}:{{ default .Values.image.tag }}"
               {{- with .Values.securityContext }}
               securityContext:
-                {{- tpl ( toYaml . ) $ | nindent 2 }}
+                {{- tpl ( toYaml . ) $ | nindent 16 }}
               {{- end }}
               {{- with (include "tc.common.controller.volumeMounts" . | trim) }}
               volumeMounts:
-                {{ nindent 2 . }}
+                {{ nindent 16 . }}
               {{- end }}
+              command:
+                - "/bin/sh"
+                - "-c"
+                - |
+                  /bin/bash <<'EOF'
+                  echo "Waiting for Nextcloud to start..."
+                  until $(curl --output /dev/null --silent --head --fail -H "Host: test.fakedomain.dns" http://127.0.0.1/status.php); do
+                      printf '.'
+                      sleep 5
+                  done
+
+                  echo  "Nextcloud instance found!"
+                  echo  "Waiting for 30 seconds before High Performance Backend setup..."
+                  sleep 30
+                  echo  "Configuring High Performance Backend for url: ${ACCESS_URL}"
+                  run_as "php /var/www/html/occ notify_push:setup ${ACCESS_URL}/push"
+                  rm -f /var/www/html/HPBSTARTED
+                  EOF
               env:
                 - name: NEXTCLOUD_URL
                   value: 'http://127.0.0.1'
@@ -59,27 +78,5 @@ spec:
                     secretKeyRef:
                       name: rediscreds
                       key: redis-password
-              image: "{{ .Values.image.repository }}:{{ default .Values.image.tag }}"
-              imagePullPolicy: {{ default .Values.image.pullPolicy }}
-              command:
-                - "/bin/sh"
-                - "-c"
-                - |
-                  /bin/bash <<'EOF'
-
-                  echo "Waiting for Nextcloud to start..."
-                  until $(curl --output /dev/null --silent --head --fail -H "Host: test.fakedomain.dns" http://127.0.0.1/status.php); do
-                      printf '.'
-                      sleep 5
-                  done
-
-                  echo  "Nextcloud instance found!"
-                  echo  "Waiting for 30 seconds before High Performance Backend setup..."
-                  sleep 30
-                  echo  "Configuring High Performance Backend for url: ${ACCESS_URL}"
-                  run_as "php /var/www/html/occ notify_push:setup ${ACCESS_URL}/push"
-                  rm -f /var/www/html/HPBSTARTED
-
-                  EOF
 
 {{- end -}}
